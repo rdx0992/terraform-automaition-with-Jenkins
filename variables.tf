@@ -1,11 +1,11 @@
 variable "aws_region" {
        description = "The AWS region to create things in." 
-       default     = "ap-south-1" 
+       default     = "us-east-1a" 
 }
 
 variable "key_name" { 
     description = " SSH keys to connect to ec2 instance" 
-    default     =  "myJune2021Key" 
+    default     =  "Webappdeploy" 
 }
 
 variable "instance_type" { 
