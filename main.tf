@@ -10,7 +10,16 @@ resource "aws_vpc" "main" {
   }
 }
 
-#Create security group with firewall rules
+# Create internet gateway and attach it to the VPC
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "my_internet_gateway"
+  }
+}
+
+# Create security group with firewall rules
 resource "aws_security_group" "jenkins-sg-2022" {
   name        = var.security_group
   description = "security group for Ec2 instance"
@@ -52,11 +61,17 @@ resource "aws_instance" "myFirstInstance" {
   }
 }
 
-# Create Elastic IP address
+# Create Elastic IP address and associate it with the EC2 instance
 resource "aws_eip" "myFirstInstance" {
   vpc = true
-  instance = aws_instance.myFirstInstance.id
-tags= {
+  tags= {
     Name = "my_elastic_ip"
   }
+}
+
+resource "aws_eip_association" "myFirstInstance" {
+  instance_id = aws_instance.myFirstInstance.id
+  allocation_id = aws_eip.myFirstInstance.id
+  vpc_id = aws_vpc.main.id
+  depends_on = [aws_internet_gateway.gw]
 }
